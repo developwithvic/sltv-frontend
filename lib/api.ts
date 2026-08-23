@@ -1,8 +1,31 @@
 import axios from "axios";
 
+/**
+ * Sanitizes and formats the API base URL.
+ * Automatically adds https:// protocol if missing and ensures /api path is present.
+ */
+const getApiBaseUrl = (): string => {
+    let url = (process.env.NEXT_PUBLIC_API_URL || "https://app.ezyvtu.com.ng/api/v1").trim();
+
+    // Ensure the URL includes a protocol (http:// or https://)
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        url = `https://${url}`;
+    }
+
+    // Strip any trailing slashes
+    url = url.replace(/\/+$/, "");
+
+    // If the base URL is just a domain without an /api path, append /api/v1
+    if (!url.includes("/api")) {
+        url = `${url}/api/v1`;
+    }
+
+    return url;
+};
+
 // Create an Axios instance with default configuration
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || "https://app.ezyvtu.com.ng/api/v1",
+    baseURL: getApiBaseUrl(),
     headers: {
         "Content-Type": "application/json",
     },
